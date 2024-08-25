@@ -9,18 +9,24 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import invariant from "tiny-invariant";
 
 import "./tailwind.css";
 
 import { getContacts } from "./data";
 
-export const loader = async () => {
-  const contacts = await getContacts();
-  return json({ contacts });
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  invariant(params.contactId, "Missing contactId param");
+  const contact = await getContacts(params.contactId);
+  if (!contact) {
+    throw new Response("Not Found", { status: 404 });
+  }
+  return json({ contact });
 }
 
 export default function App() {
-  const { contacts } = useLoaderData<typeof loader>();
+  const { contact } = useLoaderData<typeof loader>();
 
   return (
     <html lang="en">
@@ -57,7 +63,7 @@ export default function App() {
                 <Link to={`/contacts/2`}>Your Friend</Link>
               </li>
             </ul> */}
-            {contacts.length ? (
+            {/* {contacts.length ? (
               <ul>
                 {contacts.map((contact) => (
                   <li key={contact.id}>
@@ -80,7 +86,7 @@ export default function App() {
               <p>
                 <i>No contacts</i>
               </p>
-            )}
+            )} */}
           </nav>
         </div>
         <div id="detail">
