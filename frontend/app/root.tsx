@@ -1,14 +1,38 @@
+import { json } from "@remix-run/node";
 import {
   Form,
   Links,
+  Link,
   Meta,
+  Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import invariant from "tiny-invariant";
 
 import "./tailwind.css";
 
+import { createEmptyContact, getContacts } from "./data";
+
+// export const loader = async ({ params }: LoaderFunctionArgs) => {
+//   invariant(params.contactId, "Missing contactId param");
+//   const contact = await getContacts(params.contactId);
+//   if (!contact) {
+//     throw new Response("Not Found", { status: 404 });
+//   }
+//   return json({ contact });
+// }
+
+export const action = async () => {
+  const contact = await createEmptyContact();
+  return json({ contact });
+}
+
 export default function App() {
+  // const { contact } = useLoaderData<typeof loader>();
+
   return (
     <html lang="en">
       <head>
@@ -36,15 +60,42 @@ export default function App() {
             </Form>
           </div>
           <nav>
-            <ul>
+            {/* <ul>
               <li>
-                <a href={`/contacts/1`}>Your Name</a>
+                <Link to={`/contacts/1`}>Your Name</Link>
               </li>
               <li>
-                <a href={`/contacts/2`}>Your Friend</a>
+                <Link to={`/contacts/2`}>Your Friend</Link>
               </li>
-            </ul>
+            </ul> */}
+            {/* {contacts.length ? (
+              <ul>
+                {contacts.map((contact) => (
+                  <li key={contact.id}>
+                    <Link to={`contacts/${contact.id}`}>
+                      {contact.first || contact.last ? (
+                        <>
+                          {contact.first} {contact.last}
+                        </>
+                      ) : (
+                        <i>No Name</i>
+                      )}{" "}
+                      {contact.favorite ? (
+                        <span>★</span>
+                      ) : null}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                <i>No contacts</i>
+              </p>
+            )} */}
           </nav>
+        </div>
+        <div id="detail">
+          <Outlet />
         </div>
 
         <ScrollRestoration />
